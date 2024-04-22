@@ -34,62 +34,41 @@ struct rowView: View {
         }
     }
 }
-//struct ContentView: View {
-//    @State var signedIn = false
-//    var body: some View {
-//        if !signedIn{
-//            SignInView(signedIn: $signedIn)
-//            
-//        }else{
-//            HabitTrackerView()
-//        }
-//    
-//        
-//    }
-//}
-struct SignInView : View{
-   @Binding var signedIn : Bool
+
+struct SignInView : View {
+    @Binding var signedIn: Bool
     var auth = Auth.auth()
-    @State var password : String = ""
-    @State var email : String = ""
-    
+    @State var password: String = ""
+    @State var email: String = ""
+
     var body: some View {
-        HStack{
-            Text("Email:")
-            TextEditor(text: $email)
-                .frame(height: 35)
-            Text("Password:")
-            TextEditor(text: $password)
-                .frame(height: 35)
+        VStack {
+            VStack(alignment: .leading) {  // Lägg till alignment här
+                    Text("Email:")
+                    TextEditor(text: $email)
+                        .frame(height: 35)
+                    Text("Password:")
+                    TextEditor(text: $password)
+                        .frame(height: 35)
+                }
+            .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 20)
+            Button(action: {
+                auth.signIn(withEmail: email, password: password) { result, error in
+                    if let error = error {
+                        print("Error signing in: \(error)")
+                    } else {
+                        signedIn = true
+                    }
+                }
+            }, label: {
+                Text("Sign in")
+            })
         }
-        Button(action: {
-            auth.signIn(withEmail: email, password: password)  { result, error in
-                                if let error = error {
-                                    print("error signing in ")
-                                }else{
-                                    signedIn = true
-                
-                                }
-                
-                
-                            }
-                
-            
-//            auth.signInAnonymously { result, error in
-//                if let error = error {
-//                    print("error signing in ")
-//                }else{
-//                    signedIn = true
-//                    
-//                }
-//                
-//                
-//            }
-           
-        }, label: {
-            Text("sign in")
-        })
-        
+        .onAppear {
+            if Auth.auth().currentUser != nil {
+                signedIn = true
+            }
+        }
     }
 }
 struct HabitTrackerView : View{
@@ -116,5 +95,5 @@ struct HabitTrackerView : View{
 }
 
 #Preview {
-    ContentView()
+ ContentView()
 }
