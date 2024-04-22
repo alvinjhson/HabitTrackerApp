@@ -6,19 +6,83 @@
 //
 
 import SwiftUI
-
+import Firebase
 struct ContentView: View {
+    @EnvironmentObject var habit: HabitViewModel
     var body: some View {
-        //tes
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack{
+            VStack {
+                List() {
+                    ForEach(habit.noteEntries) { entry in
+                        NavigationLink( destination:HabitEntryView(habitEntry: entry)){
+                            rowView(entry: entry)
+                        }
+                        
+                    }
+                }
+            }
+            .navigationTitle("Habits")
+            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView()) {
+               Image(systemName: "plus.circle")
+            })
         }
-        .padding()
     }
 }
+struct rowView: View {
+    
+    let entry: HabitInformation
+    
+    var body: some View {
+        HStack {
+            Text(entry.note)
+                       
+
+        }
+    }
+}
+//struct ContentView: View {
+//    @State var signedIn = false
+//    var body: some View {
+//        if !signedIn{
+//            SignInView(signedIn: $signedIn)
+//            
+//        }else{
+//            HabitTrackerView()
+//        }
+//    
+//        
+//    }
+//}
+//struct SignInView : View{
+//   @Binding var signedIn : Bool
+//    var auth = Auth.auth()
+//    
+//    var body: some View {
+//        Button(action: {
+//            auth.signInAnonymously { result, error in
+//                if let error = error {
+//                    print("error signing in ")
+//                }else{
+//                    signedIn = true
+//                    
+//                }
+//                
+//                
+//            }
+//           
+//        }, label: {
+//            Text("sign in")
+//        })
+//        
+//    }
+//}
+//struct HabitTrackerView : View{
+//    
+//    var body: some View {
+//    Text("habits")
+//        
+//    }
+//}
 
 #Preview {
     ContentView()
