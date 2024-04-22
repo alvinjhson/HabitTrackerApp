@@ -9,6 +9,8 @@ import SwiftUI
 import Firebase
 struct ContentView: View {
         @State var signedIn = false
+    
+   
         var body: some View {
             if !signedIn{
                 SignInView(signedIn: $signedIn)
@@ -48,19 +50,41 @@ struct rowView: View {
 struct SignInView : View{
    @Binding var signedIn : Bool
     var auth = Auth.auth()
+    @State var password : String = ""
+    @State var email : String = ""
     
     var body: some View {
+        HStack{
+            Text("Email:")
+            TextEditor(text: $email)
+                .frame(height: 35)
+            Text("Password:")
+            TextEditor(text: $password)
+                .frame(height: 35)
+        }
         Button(action: {
-            auth.signInAnonymously { result, error in
-                if let error = error {
-                    print("error signing in ")
-                }else{
-                    signedIn = true
-                    
-                }
+            auth.signIn(withEmail: email, password: password)  { result, error in
+                                if let error = error {
+                                    print("error signing in ")
+                                }else{
+                                    signedIn = true
+                
+                                }
                 
                 
-            }
+                            }
+                
+            
+//            auth.signInAnonymously { result, error in
+//                if let error = error {
+//                    print("error signing in ")
+//                }else{
+//                    signedIn = true
+//                    
+//                }
+//                
+//                
+//            }
            
         }, label: {
             Text("sign in")
