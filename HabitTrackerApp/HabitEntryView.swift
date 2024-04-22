@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import FirebaseFirestore
+import Firebase
 
 struct HabitEntryView: View {
     
@@ -16,12 +17,13 @@ struct HabitEntryView: View {
     
     @State var note : String = ""
     @State var id : String = ""
-  
+    //@State var userID : String = ""
+    
     
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         VStack {
-          
+            
             HStack{
                 Text("Note:")
                 TextEditor(text: $note)
@@ -34,20 +36,20 @@ struct HabitEntryView: View {
             presentationMode.wrappedValue.dismiss()
             
         })
-      
+        
     }
-  
+    
     private func setContent() {
         if let habitEntry = habitEntry {
             note = habitEntry.note
-           
+            
         }
     }
-
+    
     private func saveEntry() {
         if let habitEntry = habitEntry{
             
-          habits.update(entry: habitEntry, with: note)
+            habits.update(entry: habitEntry, with: note)
             //notes.update(entry: noteEntry , with: note)
             
         }else
@@ -56,31 +58,35 @@ struct HabitEntryView: View {
         }
         
         
-     
+        
         
     }
     private func addNewEntry() {
         print("addNewEntry called")
+        var auth = Auth.auth()
+        let userId = Auth.auth().currentUser?.uid
         let db = Firestore.firestore()
-
-        // Anta att 'note' är en sträng som representerar noteringen du vill spara
+        
+        
         var ref: DocumentReference? = nil
         ref = db.collection("habits").addDocument(data: [
+            "userId": userId,
             "habit": note
-        ]) {  err in
+        ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")
             } else if let ref = ref {
                 print("Document added with ID: \(ref.documentID)")
-                let newEntry = HabitInformation(id: ref.documentID, note: note)
-              
+                let newEntry = HabitInformation(id: ref.documentID, note: note,userId:userId!)
+                
+            
             }
+            
+            
+            
+            
+            
+            
         }
     }
-
-
-    
-    
-    
-    
 }

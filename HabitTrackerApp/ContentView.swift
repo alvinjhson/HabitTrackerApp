@@ -8,6 +8,71 @@
 import SwiftUI
 import Firebase
 struct ContentView: View {
+        @State var signedIn = false
+    
+   
+        var body: some View {
+            if !signedIn{
+                SignInView(signedIn: $signedIn)
+    
+            }else{
+                HabitTrackerView()
+            }
+    
+    
+        }
+}
+struct rowView: View {
+    
+    let entry: HabitInformation
+    
+    var body: some View {
+        HStack {
+            Text(entry.note)
+                       
+
+        }
+    }
+}
+
+struct SignInView : View {
+    @Binding var signedIn: Bool
+    var auth = Auth.auth()
+    @State var password: String = ""
+    @State var email: String = ""
+
+    var body: some View {
+        VStack {
+            VStack(alignment: .leading) {  // Lägg till alignment här
+                    Text("Email:")
+                    TextEditor(text: $email)
+                        .frame(height: 35)
+                    Text("Password:")
+                    TextEditor(text: $password)
+                        .frame(height: 35)
+                }
+            .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 20)
+            Button(action: {
+                auth.signIn(withEmail: email, password: password) { result, error in
+                    if let error = error {
+                        print("Error signing in: \(error)")
+                    } else {
+                        signedIn = true
+                    }
+                }
+            }, label: {
+                Text("Sign in")
+            })
+        }
+        .onAppear {
+            if Auth.auth().currentUser != nil {
+                signedIn = true
+            }
+        }
+    }
+}
+struct HabitTrackerView : View{
+    
     @EnvironmentObject var habit: HabitViewModel
     var body: some View {
         NavigationStack{
@@ -28,62 +93,7 @@ struct ContentView: View {
         }
     }
 }
-struct rowView: View {
-    
-    let entry: HabitInformation
-    
-    var body: some View {
-        HStack {
-            Text(entry.note)
-                       
-
-        }
-    }
-}
-//struct ContentView: View {
-//    @State var signedIn = false
-//    var body: some View {
-//        if !signedIn{
-//            SignInView(signedIn: $signedIn)
-//            
-//        }else{
-//            HabitTrackerView()
-//        }
-//    
-//        
-//    }
-//}
-//struct SignInView : View{
-//   @Binding var signedIn : Bool
-//    var auth = Auth.auth()
-//    
-//    var body: some View {
-//        Button(action: {
-//            auth.signInAnonymously { result, error in
-//                if let error = error {
-//                    print("error signing in ")
-//                }else{
-//                    signedIn = true
-//                    
-//                }
-//                
-//                
-//            }
-//           
-//        }, label: {
-//            Text("sign in")
-//        })
-//        
-//    }
-//}
-//struct HabitTrackerView : View{
-//    
-//    var body: some View {
-//    Text("habits")
-//        
-//    }
-//}
 
 #Preview {
-    ContentView()
+ ContentView()
 }
