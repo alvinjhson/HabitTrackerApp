@@ -12,9 +12,10 @@ import Firebase
 
 struct HabitTrackerAppApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var habit = HabitViewModel()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environmentObject(habit)
         }
     }
 }
