@@ -15,6 +15,9 @@ struct HabitEntryView: View {
     var habitEntry : HabitInformation?
     @EnvironmentObject var habits : HabitViewModel
     
+    let customBlue = Color(red: 0x3D / 255.0, green: 0x84 / 255.0, blue: 0xB7 / 255.0)
+    let customGreen = Color(red: 0x29 / 255.0, green: 0x7E / 255.0, blue: 0x7E / 255.0)
+    
     @State var note : String = ""
     @State var id : String = ""
     @State var currentStreak = 0
@@ -23,18 +26,104 @@ struct HabitEntryView: View {
     @State var streakHistory : [Date]?
     @State var category = 0
     @State var daysActive: [Weekday]
-    //@State var userID : String = ""
+  
     
     
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         VStack {
             
-            HStack{
-                Text("Note:")
+            VStack{
+                Text("What is your habit?")
                 TextEditor(text: $note)
-                    .frame(height: 35)
+                    .frame(width: 300,height: 35)
+                    .background(Color.black) // Sätter bakgrundsfärgen till svart
+                                 .foregroundColor(.black) // Sätter textfärgen till vit för bättre kontrast
+                                 .clipShape(Capsule())
+                                 .overlay(
+                                       Capsule().stroke(Color.blue, lineWidth: 2) // Ändrar färg på capsule kanten till röd
+                                   )
+                                 
+              
             }
+            Spacer()
+            Text("Select a category for your habit")
+            HStack {
+                // Första kortet
+                VStack {
+                    HStack {
+                        Image(systemName: "figure.strengthtraining.traditional")
+                            .foregroundColor(Color.white)
+                        // Symbolen till vänster
+                        Spacer() // Skapar utrymme mellan symbolen och texten
+                        Text("Fitness") // Texten i mitten
+                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                    }
+                    .padding()
+                }
+                .background(category == 1 ? Color.blue :customGreen)
+                .foregroundColor(Color.white)// Ändrar färg när kortet är valt
+                .cornerRadius(10) // Runda hörnen
+                .onTapGesture {
+                    category = 1
+                    
+                }
+
+                // Andra kortet
+                VStack {
+                    HStack {
+                        Image(systemName: "fork.knife")
+                            .foregroundColor(Color.white)// Symbolen till vänster
+                        Spacer() // Skapar utrymme mellan symbolen och texten
+                        Text("Nutrition") // Texten i mitten
+                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                    }
+                    .padding()
+                }
+                .background(category == 2 ? Color.blue : customBlue)  .foregroundColor(Color.white)
+                .cornerRadius(10) // Runda hörnen
+                .onTapGesture {
+                    category = 2
+                }
+                
+            }
+            HStack {
+                // Första kortet
+                VStack {
+                    HStack {
+                        Image(systemName: "star.fill") // Symbolen till vänster
+                        Spacer() // Skapar utrymme mellan symbolen och texten
+                        Text("Kort 1") // Texten i mitten
+                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                    }
+                    .padding()
+                }
+                .background(category == 3 ? Color.blue : Color.gray) // Ändrar färg när kortet är valt
+                .cornerRadius(10) // Runda hörnen
+                .onTapGesture {
+                    category = 3
+                }
+
+                // Andra kortet
+                VStack {
+                    HStack {
+                        Image(systemName: "heart.fill") // Symbolen till vänster
+                        Spacer() // Skapar utrymme mellan symbolen och texten
+                        Text("Kort 2") // Texten i mitten
+                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                    }
+                    .padding()
+                }
+                .background(category == 4 ? Color.blue : Color.gray) // Ändrar färg när kortet är valt
+                .cornerRadius(10) // Runda hörnen
+                .onTapGesture {
+                    category = 4
+                }
+                
+            }
+            
+            
+            //.padding() // Lägg till padding runt he runt hela HStackill padding runt hela HStack
         }
         .onAppear(perform: setContent)
         .navigationBarItems(trailing: Button("save"){
@@ -48,6 +137,7 @@ struct HabitEntryView: View {
     private func setContent() {
         if let habitEntry = habitEntry {
             note = habitEntry.note
+            category = habitEntry.category
             
         }
     }
@@ -55,7 +145,9 @@ struct HabitEntryView: View {
     private func saveEntry() {
         if let habitEntry = habitEntry{
             
-            habits.update(entry: habitEntry, with: note)
+            habits.update(entry: habitEntry, with: note, with: category)
+            
+          
             //notes.update(entry: noteEntry , with: note)
             
         }else
@@ -91,4 +183,8 @@ struct HabitEntryView: View {
 
         }
     }
+}
+#Preview {
+    HabitEntryView( daysActive: [])
+ 
 }
