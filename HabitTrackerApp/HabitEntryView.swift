@@ -17,6 +17,10 @@ struct HabitEntryView: View {
     
     @State var note : String = ""
     @State var id : String = ""
+    @State var currentStreak = 0
+    @State var highestStreak = 0
+    @State var alertTime : Date?
+    @State var streakHistory : [Date]?
     //@State var userID : String = ""
     
     
@@ -58,8 +62,6 @@ struct HabitEntryView: View {
         }
         
         
-        
-        
     }
     private func addNewEntry() {
         print("addNewEntry called")
@@ -67,26 +69,22 @@ struct HabitEntryView: View {
         let userId = Auth.auth().currentUser?.uid
         let db = Firestore.firestore()
         
-        
         var ref: DocumentReference? = nil
         ref = db.collection("habits").addDocument(data: [
             "userId": userId,
-            "habit": note
+            "habit": note,
+            "currentStreak": currentStreak,
+            "highestStreak": highestStreak
+           // "alertTime": alertTime ?? "No alertTime",
+            //"streakHistory":streakHistory ?? "No streakHistory"
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")
             } else if let ref = ref {
                 print("Document added with ID: \(ref.documentID)")
-                let newEntry = HabitInformation(id: ref.documentID, note: note,userId:userId!)
-                
-            
+                let newEntry = HabitInformation(id: ref.documentID, note: note,userId:userId!,currentStreak: 0,highestStreak: 0,alertTime: Date(),streakHistory: [Date()])
             }
-            
-            
-            
-            
-            
-            
+
         }
     }
 }

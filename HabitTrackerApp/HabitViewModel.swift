@@ -48,8 +48,15 @@ class HabitViewModel : ObservableObject {
                 let note = document.data()["habit"] as? String ?? ""
                 let id = document.documentID
                 let userId = document.data()["userId"] as? String ?? ""
+                let currentStreak = document.data()["currentStreak"] as? Int ?? 0
+                let highestStreak = document.data()["highestStreak"] as? Int ?? 0
+                let alertTime = document.data()["alertTime"] as? Date ?? Date()
+                let streakHistory = document.data()["streakHistory"] as? [Date] ?? [Date()]
                 
-                self.noteEntries.append(HabitInformation(id: id, note: note, userId: userId))
+                
+                
+                
+                self.noteEntries.append(HabitInformation(id: id, note: note, userId: userId,currentStreak: currentStreak,highestStreak: highestStreak,alertTime: alertTime,streakHistory: streakHistory))
             }
         }
     }
