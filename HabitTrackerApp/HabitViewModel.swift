@@ -18,10 +18,12 @@ class HabitViewModel : ObservableObject {
       
     }
 
-    func update(entry: HabitInformation, with note: String) {
+    func update(entry: HabitInformation, with note: String,with category: Int) {
         let db = Firestore.firestore()
         db.collection("habits").document(entry.id).updateData([
-            "habit": note
+            "habit": note,
+            "category": category
+            
         ]) { err in
             if let err = err {
                 print("Error updating document: \(err)")
