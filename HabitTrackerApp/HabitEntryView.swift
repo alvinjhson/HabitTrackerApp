@@ -21,6 +21,8 @@ struct HabitEntryView: View {
     @State var highestStreak = 0
     @State var alertTime : Date?
     @State var streakHistory : [Date]?
+    @State var category = 0
+    @State var daysActive: [Weekday]
     //@State var userID : String = ""
     
     
@@ -74,7 +76,9 @@ struct HabitEntryView: View {
             "userId": userId,
             "habit": note,
             "currentStreak": currentStreak,
-            "highestStreak": highestStreak
+            "highestStreak": highestStreak,
+            "category" : category,
+            "daysActive": daysActive
            // "alertTime": alertTime ?? "No alertTime",
             //"streakHistory":streakHistory ?? "No streakHistory"
         ]) { err in
@@ -82,7 +86,7 @@ struct HabitEntryView: View {
                 print("Error adding document: \(err)")
             } else if let ref = ref {
                 print("Document added with ID: \(ref.documentID)")
-                let newEntry = HabitInformation(id: ref.documentID, note: note,userId:userId!,currentStreak: 0,highestStreak: 0,alertTime: Date(),streakHistory: [Date()])
+                let newEntry = HabitInformation(id: ref.documentID, note: note,userId:userId!,currentStreak: 0,highestStreak: 0,alertTime: Date(),streakHistory: [Date()],category: category,daysActive: daysActive)
             }
 
         }

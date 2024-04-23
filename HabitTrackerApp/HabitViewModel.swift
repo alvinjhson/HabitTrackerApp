@@ -52,11 +52,14 @@ class HabitViewModel : ObservableObject {
                 let highestStreak = document.data()["highestStreak"] as? Int ?? 0
                 let alertTime = document.data()["alertTime"] as? Date ?? Date()
                 let streakHistory = document.data()["streakHistory"] as? [Date] ?? [Date()]
+                let category = document.data()["category"] as? Int ?? 0
+                let daysActiveStrings = document.data()["daysActive"] as? [String] ?? [String]()
+                let daysActive = daysActiveStrings.compactMap { Weekday(rawValue: $0) }
                 
                 
                 
                 
-                self.noteEntries.append(HabitInformation(id: id, note: note, userId: userId,currentStreak: currentStreak,highestStreak: highestStreak,alertTime: alertTime,streakHistory: streakHistory))
+                self.noteEntries.append(HabitInformation(id: id, note: note, userId: userId,currentStreak: currentStreak,highestStreak: highestStreak,alertTime: alertTime,streakHistory: streakHistory,category: category,daysActive: daysActive))
             }
         }
     }

@@ -79,7 +79,7 @@ struct HabitTrackerView : View{
             VStack {
                 List() {
                     ForEach(habit.noteEntries) { entry in
-                        NavigationLink( destination:HabitEntryView(habitEntry: entry,alertTime: Date(),streakHistory: [Date()])){
+                        NavigationLink( destination:HabitEntryView(habitEntry: entry,alertTime: Date(),streakHistory: [Date()], daysActive: [])){
                             rowView(entry: entry)
                         }
                         
@@ -87,7 +87,7 @@ struct HabitTrackerView : View{
                 }
             }
             .navigationTitle("Habits")
-            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()])) {
+            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
                Image(systemName: "plus.circle")
             })
         }
