@@ -43,7 +43,7 @@ struct SignInView : View {
 
     var body: some View {
         VStack {
-            VStack(alignment: .leading) {  // Lägg till alignment här
+            VStack(alignment: .leading) {
                     Text("Email:")
                     TextEditor(text: $email)
                         .frame(height: 35)
@@ -79,7 +79,7 @@ struct HabitTrackerView : View{
             VStack {
                 List() {
                     ForEach(habit.noteEntries) { entry in
-                        NavigationLink( destination:HabitEntryView(habitEntry: entry)){
+                        NavigationLink( destination:HabitEntryView(habitEntry: entry,alertTime: Date(),streakHistory: [Date()], daysActive: [])){
                             rowView(entry: entry)
                         }
                         
@@ -87,7 +87,7 @@ struct HabitTrackerView : View{
                 }
             }
             .navigationTitle("Habits")
-            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView()) {
+            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
                Image(systemName: "plus.circle")
             })
         }
