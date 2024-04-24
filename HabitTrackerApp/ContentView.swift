@@ -34,11 +34,6 @@ struct rowView: View {
         }
     }
 }
-//struct HabitEntry: Identifiable {
-//    var id: String
-//    var category: Int
-//    // Andra egenskaper kan också finnas här
-//}
 
 
 struct SignInView : View {
@@ -77,29 +72,46 @@ struct SignInView : View {
         }
     }
 }
+extension Int {
+    func toWeekday() -> Weekday? {
+        switch self {
+        case 1: return .sunday
+        case 2: return .monday
+        case 3: return .tuesday
+        case 4: return .wednesday
+        case 5: return .thursday
+        case 6: return .friday
+        case 7: return .saturday
+        default: return nil
+        }
+    }
+}
 
 struct HabitTrackerView : View{
     
+    
     @EnvironmentObject var habit: HabitViewModel
+    
+    
     var body: some View {
+        let currentDay = Calendar.current.component(.weekday, from: Date())
+           let currentWeekday = currentDay.toWeekday()
+        Text(currentWeekday?.rawValue.capitalized ?? "Unkown Day")
+        
         NavigationStack{
             VStack {
                 List {
-                    ForEach(habit.noteEntries) { entry in
+                    ForEach(habit.noteEntries.filter { entry in
+                        entry.daysActive.contains(currentWeekday!)
+                    }) { entry in
                         NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
                             categoryView(for: entry)
                         }
                     }
+
                 }
                 
-//                List() {
-//                    ForEach(habit.noteEntries) { entry in
-//                        NavigationLink( destination:HabitEntryView(habitEntry: entry,alertTime: Date(),streakHistory: [Date()], daysActive: [])){
-//                            rowView(entry: entry)
-//                        }
-//                        
-//                    }
-//                }
+
             }
             .navigationTitle("Habits")
             .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {

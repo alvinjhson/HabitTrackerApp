@@ -17,6 +17,7 @@ struct HabitEntryView: View {
     
     let customBlue = Color(red: 0x3D / 255.0, green: 0x84 / 255.0, blue: 0xB7 / 255.0)
     let customGreen = Color(red: 0x29 / 255.0, green: 0x7E / 255.0, blue: 0x7E / 255.0)
+    let customGrey = Color(red: 0xD9 / 255, green: 0xD9 / 255, blue: 0xD9 / 255)
     
     @State var note : String = ""
     @State var id : String = ""
@@ -26,7 +27,7 @@ struct HabitEntryView: View {
     @State var streakHistory : [Date]?
     @State var category = 0
     @State var daysActive: [Weekday]
-  
+    
     
     
     @Environment(\.presentationMode) var presentationMode
@@ -47,7 +48,51 @@ struct HabitEntryView: View {
               
             }
             Spacer()
+            Text("Select a day of habit")
+                .bold()
+            HStack{
+                
+                Circle()
+                    .frame(width: 35,height: 35)
+                    .foregroundColor(customGrey)
+                   // .padding(.trailing,330)
+                Text("Specific days")
+                    .padding(.trailing,207)
+                       
+                
+                
+                    
+            }
+            HStack{
+                Circle()
+                    .frame(width: 35,height: 35)
+                    .foregroundColor(customGrey)
+                Text("Every day")
+                    .padding(.trailing,235)
+                    .background(daysActive.contains([.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]) ? Color.blue : customBlue)  .foregroundColor(Color.white)
+                    .cornerRadius(10) // Runda hörnen
+                    .onTapGesture {
+                        daysActive = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+                    }
+                    
+            }
+            HStack{
+                Circle()
+                    .frame(width: 35,height: 35)
+                    .foregroundColor(customGrey)
+                Text("Weekends")
+                    .padding(.trailing,230)
+                    .background(daysActive.contains([.saturday, .sunday]) ? Color.blue : customBlue)  .foregroundColor(Color.white)
+                    .cornerRadius(10) // Runda hörnen
+                    .onTapGesture {
+                        daysActive = [.saturday, .sunday]
+                    }
+                
+                    
+            }
+           
             Text("Select a category for your habit")
+                .bold()
             HStack {
                 // Första kortet
                 VStack {
@@ -138,6 +183,7 @@ struct HabitEntryView: View {
         if let habitEntry = habitEntry {
             note = habitEntry.note
             category = habitEntry.category
+            daysActive = habitEntry.daysActive
             
         }
     }
@@ -158,6 +204,7 @@ struct HabitEntryView: View {
         
     }
     private func addNewEntry() {
+        let daysActiveStrings = daysActive.map { $0.rawValue }
         print("addNewEntry called")
         var auth = Auth.auth()
         let userId = Auth.auth().currentUser?.uid
@@ -170,7 +217,7 @@ struct HabitEntryView: View {
             "currentStreak": currentStreak,
             "highestStreak": highestStreak,
             "category" : category,
-            "daysActive": daysActive
+            "daysActive": daysActiveStrings
            // "alertTime": alertTime ?? "No alertTime",
             //"streakHistory":streakHistory ?? "No streakHistory"
         ]) { err in
