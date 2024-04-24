@@ -34,6 +34,12 @@ struct rowView: View {
         }
     }
 }
+//struct HabitEntry: Identifiable {
+//    var id: String
+//    var category: Int
+//    // Andra egenskaper kan också finnas här
+//}
+
 
 struct SignInView : View {
     @Binding var signedIn: Bool
@@ -71,29 +77,83 @@ struct SignInView : View {
         }
     }
 }
+
 struct HabitTrackerView : View{
     
     @EnvironmentObject var habit: HabitViewModel
     var body: some View {
         NavigationStack{
             VStack {
-                List() {
+                List {
                     ForEach(habit.noteEntries) { entry in
-                        NavigationLink( destination:HabitEntryView(habitEntry: entry,alertTime: Date(),streakHistory: [Date()], daysActive: [])){
-                            rowView(entry: entry)
+                        NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
+                            categoryView(for: entry)
                         }
-                        
                     }
                 }
+                
+//                List() {
+//                    ForEach(habit.noteEntries) { entry in
+//                        NavigationLink( destination:HabitEntryView(habitEntry: entry,alertTime: Date(),streakHistory: [Date()], daysActive: [])){
+//                            rowView(entry: entry)
+//                        }
+//                        
+//                    }
+//                }
             }
             .navigationTitle("Habits")
             .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
-               Image(systemName: "plus.circle")
+                Image(systemName: "plus.circle")
             })
         }
     }
 }
-
-#Preview {
- ContentView()
+    
+    
+func categoryView(for habitInfo: HabitInformation) -> some View {
+    let customBlue = Color(red: 0x3D / 255.0, green: 0x84 / 255.0, blue: 0xB7 / 255.0)
+    let customGreen = Color(red: 0x29 / 255.0, green: 0x7E / 255.0, blue: 0x7E / 255.0)
+    switch habitInfo.category {
+    case 1:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "figure.strengthtraining.traditional")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+            }
+            .padding()
+            .background(customGreen)
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 2:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "fork.knife")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+            }
+            .padding()
+            .background(customBlue)
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    default:
+        return AnyView(VStack {
+            Text("Andra kategorier här")
+            .padding()
+            .background(Color.gray)
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    }
 }
+    
+    #Preview {
+        ContentView()
+    }
+    
