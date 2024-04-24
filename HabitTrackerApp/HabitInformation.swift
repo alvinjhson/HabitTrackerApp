@@ -6,8 +6,8 @@
 //
 
 import Foundation
-enum Weekday: String, Codable {
-    case monday, tuesday, wednesday, thursday, friday, saturday
+enum Weekday: String,CaseIterable, Codable {
+    case monday, tuesday, wednesday, thursday, friday, saturday , sunday
 }
 struct HabitInformation: Identifiable,Equatable {
     
