@@ -27,6 +27,7 @@ struct HabitEntryView: View {
     @State var streakHistory : [Date]?
     @State var category = 0
     @State var daysActive: [Weekday]
+    @State private var showingSheet = false
     
     
     
@@ -58,10 +59,13 @@ struct HabitEntryView: View {
                    // .padding(.trailing,330)
                 Text("Specific days")
                     .padding(.trailing,207)
-                       
-                
-                
-                    
+                    .onTapGesture {
+                        showingSheet = true
+                    }
+                    .sheet(isPresented: $showingSheet) {
+                               ChooseDaySheet(daysActive: $daysActive)
+                           }
+    
             }
             HStack{
                 Circle()
@@ -94,73 +98,73 @@ struct HabitEntryView: View {
             Text("Select a category for your habit")
                 .bold()
             HStack {
-                // Första kortet
+                // Card 1
                 VStack {
                     HStack {
                         Image(systemName: "figure.strengthtraining.traditional")
                             .foregroundColor(Color.white)
-                        // Symbolen till vänster
-                        Spacer() // Skapar utrymme mellan symbolen och texten
-                        Text("Fitness") // Texten i mitten
-                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                        
+                        Spacer()
+                        Text("Fitness")
+                        Spacer()
                     }
                     .padding()
                 }
                 .background(category == 1 ? Color.blue :customGreen)
-                .foregroundColor(Color.white)// Ändrar färg när kortet är valt
-                .cornerRadius(10) // Runda hörnen
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
                 .onTapGesture {
                     category = 1
                     
                 }
 
-                // Andra kortet
+                // Card 2
                 VStack {
                     HStack {
                         Image(systemName: "fork.knife")
-                            .foregroundColor(Color.white)// Symbolen till vänster
-                        Spacer() // Skapar utrymme mellan symbolen och texten
-                        Text("Nutrition") // Texten i mitten
-                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                            .foregroundColor(Color.white)
+                        Spacer()
+                        Text("Nutrition")
+                        Spacer()
                     }
                     .padding()
                 }
                 .background(category == 2 ? Color.blue : customBlue)  .foregroundColor(Color.white)
-                .cornerRadius(10) // Runda hörnen
+                .cornerRadius(10)
                 .onTapGesture {
                     category = 2
                 }
                 
             }
             HStack {
-                // Första kortet
+                // Card 3
                 VStack {
                     HStack {
-                        Image(systemName: "star.fill") // Symbolen till vänster
-                        Spacer() // Skapar utrymme mellan symbolen och texten
-                        Text("Kort 1") // Texten i mitten
-                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                        Image(systemName: "star.fill")
+                        Spacer()
+                        Text("Kort 1")
+                        Spacer()
                     }
                     .padding()
                 }
-                .background(category == 3 ? Color.blue : Color.gray) // Ändrar färg när kortet är valt
-                .cornerRadius(10) // Runda hörnen
+                .background(category == 3 ? Color.blue : Color.gray)
+                .cornerRadius(10)
                 .onTapGesture {
                     category = 3
                 }
 
-                // Andra kortet
+                // Card 4
                 VStack {
                     HStack {
-                        Image(systemName: "heart.fill") // Symbolen till vänster
-                        Spacer() // Skapar utrymme mellan symbolen och texten
-                        Text("Kort 2") // Texten i mitten
-                        Spacer() // Skapar utrymme på höger sida så texten hamnar i mitten
+                        Image(systemName: "heart.fill")
+                        Spacer()
+                        Text("Kort 2")
+                        Spacer()
                     }
                     .padding()
                 }
-                .background(category == 4 ? Color.blue : Color.gray) // Ändrar färg när kortet är valt
-                .cornerRadius(10) // Runda hörnen
+                .background(category == 4 ? Color.blue : Color.gray)
+                .cornerRadius(10)
                 .onTapGesture {
                     category = 4
                 }
@@ -168,7 +172,7 @@ struct HabitEntryView: View {
             }
             
             
-            //.padding() // Lägg till padding runt he runt hela HStackill padding runt hela HStack
+           
         }
         .onAppear(perform: setContent)
         .navigationBarItems(trailing: Button("save"){
@@ -177,6 +181,31 @@ struct HabitEntryView: View {
             
         })
         
+    }
+
+    struct ChooseDaySheet: View {
+        @Binding var daysActive: [Weekday]
+
+        var body: some View {
+            VStack {
+                ForEach(Weekday.allCases, id: \.self) { day in
+                    Toggle(isOn: Binding(
+                        get: { daysActive.contains(day) },
+                        set: { newValue in
+                            if newValue {
+                                if !daysActive.contains(day) {
+                                    daysActive.append(day)
+                                }
+                            } else {
+                                daysActive.removeAll { $0 == day }
+                            }
+                        }
+                    )) {
+                        Text(day.rawValue.capitalized)
+                    }
+                }
+            }
+        }
     }
     
     private func setContent() {
