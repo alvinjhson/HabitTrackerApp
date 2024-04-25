@@ -20,9 +20,10 @@ struct HabitInformation: Identifiable,Equatable {
     var streakHistory: [Date]
     var category: Int
     var daysActive: [Weekday]
+    var streakDone : Bool
 
     
-    init(id: String, note: String,userId: String,currentStreak: Int,highestStreak: Int,alertTime : Date,streakHistory: [Date],category : Int, daysActive: [Weekday]) {
+    init(id: String, note: String,userId: String,currentStreak: Int,highestStreak: Int,alertTime : Date,streakHistory: [Date],category : Int, daysActive: [Weekday],streakDone: Bool) {
         self.id = id
         self.note = note
         self.userId = userId
@@ -32,6 +33,7 @@ struct HabitInformation: Identifiable,Equatable {
         self.streakHistory = streakHistory
         self.category = category
         self.daysActive = daysActive
+        self.streakDone = streakDone
     }
     
 }
