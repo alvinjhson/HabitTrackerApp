@@ -28,6 +28,7 @@ struct HabitEntryView: View {
     @State var category = 0
     @State var daysActive: [Weekday]
     @State private var showingSheet = false
+    @State var specificDay = false
     
     
     
@@ -39,14 +40,13 @@ struct HabitEntryView: View {
                 Text("What is your habit?")
                 TextEditor(text: $note)
                     .frame(width: 300,height: 35)
-                    .background(Color.black) // Sätter bakgrundsfärgen till svart
-                                 .foregroundColor(.black) // Sätter textfärgen till vit för bättre kontrast
+                    .background(Color.black)
+                                 .foregroundColor(.black)
                                  .clipShape(Capsule())
                                  .overlay(
-                                       Capsule().stroke(Color.blue, lineWidth: 2) // Ändrar färg på capsule kanten till röd
+                                       Capsule().stroke(Color.blue, lineWidth: 2) 
                                    )
-                                 
-              
+                                
             }
             Spacer()
             Text("Select a day of habit")
@@ -54,45 +54,47 @@ struct HabitEntryView: View {
             HStack{
                 
                 Circle()
-                    .frame(width: 35,height: 35)
-                    .foregroundColor(customGrey)
-                   // .padding(.trailing,330)
-                Text("Specific days")
-                    .padding(.trailing,207)
+                    .frame(width: 25,height: 25)
+                    .foregroundColor(showingSheet ==  true||specificDay ==  true ? Color.blue :customGrey)
                     .onTapGesture {
                         showingSheet = true
+                        specificDay = true
                     }
+                Text("Specific days")
+                    .padding(.trailing,207)
+                  
                     .sheet(isPresented: $showingSheet) {
                                ChooseDaySheet(daysActive: $daysActive)
                            }
-    
             }
             HStack{
                 Circle()
-                    .frame(width: 35,height: 35)
-                    .foregroundColor(customGrey)
-                Text("Every day")
-                    .padding(.trailing,235)
-                    .background(daysActive.contains([.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]) ? Color.blue : customBlue)  .foregroundColor(Color.white)
+                    .frame(width: 25,height: 25)
+                   
+                    .foregroundColor(daysActive == [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday] && specificDay ==  !true   ? Color.blue : customGrey)  .foregroundColor(Color.white)
                     .cornerRadius(10) // Runda hörnen
                     .onTapGesture {
                         daysActive = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+                        specificDay = false
                     }
-                    
+                Text("Every day")
+                    .padding(.trailing,235)
             }
             HStack{
                 Circle()
-                    .frame(width: 35,height: 35)
-                    .foregroundColor(customGrey)
-                Text("Weekends")
-                    .padding(.trailing,230)
-                    .background(daysActive.contains([.saturday, .sunday]) ? Color.blue : customBlue)  .foregroundColor(Color.white)
-                    .cornerRadius(10) // Runda hörnen
+                    .frame(width: 25,height: 25)
+                    .foregroundColor(daysActive == [.saturday, .sunday] && specificDay ==  !true ? Color.blue :customGrey)
+                   
+                    .cornerRadius(10)
+                 .foregroundColor(Color.white)
+                
                     .onTapGesture {
                         daysActive = [.saturday, .sunday]
+                        specificDay = false
                     }
-                
-                    
+                Text("Weekends")
+                    .padding(.trailing,230)
+    
             }
            
             Text("Select a category for your habit")
