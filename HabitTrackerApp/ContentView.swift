@@ -94,6 +94,7 @@ struct HabitTrackerView : View{
     
     
     var body: some View {
+        
         let currentDay = Calendar.current.component(.weekday, from: Date())
            let currentWeekday = currentDay.toWeekday()
         Text(currentWeekday?.rawValue.capitalized ?? "Unkown Day")
@@ -123,6 +124,7 @@ struct HabitTrackerView : View{
     
     
 func categoryView(for habitInfo: HabitInformation) -> some View {
+    let db = Firestore.firestore()
     let customBlue = Color(red: 0x3D / 255.0, green: 0x84 / 255.0, blue: 0xB7 / 255.0)
     let customGreen = Color(red: 0x29 / 255.0, green: 0x7E / 255.0, blue: 0x7E / 255.0)
     switch habitInfo.category {
@@ -134,6 +136,14 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
                 Spacer()
                 Text(habitInfo.note)
                 Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : !habitInfo.streakDone])
+                })
             }
             .padding()
             .background(customGreen)
@@ -148,7 +158,16 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
                 Spacer()
                 Text(habitInfo.note)
                 Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : !habitInfo.streakDone])
+                })
             }
+            
             .padding()
             .background(customBlue)
             .foregroundColor(Color.white)
@@ -167,5 +186,7 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
     
     #Preview {
         ContentView()
+  
+    
     }
     
