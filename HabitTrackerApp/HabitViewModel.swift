@@ -15,6 +15,7 @@ class HabitViewModel : ObservableObject {
     init(){
         
         setupSnapshotListener()
+       // scheduleMidnightReset()
       
     }
 
@@ -32,6 +33,41 @@ class HabitViewModel : ObservableObject {
             }
         }
     }
+    func scheduleMidnightReset() {
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: Date())
+        components.hour = 24
+        components.minute = 0
+        components.second = 0
+
+        // Skapa nästa midnatt-tidpunkt
+        let midnight = calendar.nextDate(after: Date(), matching: components, matchingPolicy: .nextTime)!
+        
+        // Skapa en timer som startar vid midnatt och upprepas varje dag
+        let timer = Timer(fireAt: midnight, interval: 86400, target: self, selector: #selector(resetStreakDone), userInfo: nil, repeats: true)
+        RunLoop.main.add(timer, forMode: .common)
+    }
+
+    @objc func resetStreakDone() {
+        let db = Firestore.firestore()
+        db.collection("habits").getDocuments { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    document.reference.updateData(["streakDone": false]) { err in
+                        if let err = err {
+                            print("Error updating document: \(err)")
+                        } else {
+                            print("Document successfully updated!")
+                        }
+                    }
+                }
+            }
+        }
+        print("Resetting streakDone at midnight")
+    }
+
 
     func setupSnapshotListener() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
