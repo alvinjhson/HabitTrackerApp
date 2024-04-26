@@ -168,14 +168,24 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
                     let newStreakDone = !habitInfo.streakDone
                     db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
                     
-                    // Update currentStreak based on the new streakDone status
+                    
                     if newStreakDone {
-                        // If streakDone is now true, increment the currentStreak
+                  
+                        let today = Calendar.current.startOfDay(for: Date())
+                       
+                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
                         let newStreak = habitInfo.currentStreak + 1
                         db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
                     } else {
-                        // If streakDone is now false, decrement the currentStreak
-                        let newStreak = max(0, habitInfo.currentStreak - 1) // Ensure currentStreak doesn't go below 0
+                        let today = Calendar.current.startOfDay(for: Date())
+                        let updatedStreakHistory = habitInfo.streakHistory.filter { date in
+                            return Calendar.current.startOfDay(for: date) != today
+                            
+                        }
+                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" : updatedStreakHistory])
+                       
+                        let newStreak = max(0, habitInfo.currentStreak - 1)
+                        
                         db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
                     }
                 })
