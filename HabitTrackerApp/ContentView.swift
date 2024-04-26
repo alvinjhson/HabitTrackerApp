@@ -164,7 +164,20 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
                     Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
                 }
                 .simultaneousGesture(TapGesture().onEnded {
-                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : !habitInfo.streakDone])
+                    // Toggle streakDone status
+                    let newStreakDone = !habitInfo.streakDone
+                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
+                    
+                    // Update currentStreak based on the new streakDone status
+                    if newStreakDone {
+                        // If streakDone is now true, increment the currentStreak
+                        let newStreak = habitInfo.currentStreak + 1
+                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                    } else {
+                        // If streakDone is now false, decrement the currentStreak
+                        let newStreak = max(0, habitInfo.currentStreak - 1) // Ensure currentStreak doesn't go below 0
+                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                    }
                 })
             }
             
@@ -183,7 +196,6 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
         })
     }
 }
-    
     #Preview {
         ContentView()
   
