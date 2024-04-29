@@ -9,8 +9,25 @@ import Foundation
 import SwiftUI
 import FirebaseFirestore
 import Firebase
+import UIKit
+extension UIColor {
+    static func fromHex(_ hex: String) -> UIColor {
+        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
+
+        var rgb: UInt64 = 0
+        Scanner(string: hexSanitized).scanHexInt64(&rgb)
+
+        let red = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
+        let green = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
+        let blue = CGFloat(rgb & 0x0000FF) / 255.0
+
+        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+    }
+}
 
 struct HabitEntryView: View {
+    
     
     var habitEntry : HabitInformation?
     @EnvironmentObject var habits : HabitViewModel
@@ -18,6 +35,7 @@ struct HabitEntryView: View {
     let customBlue = Color(red: 0x3D / 255.0, green: 0x84 / 255.0, blue: 0xB7 / 255.0)
     let customGreen = Color(red: 0x29 / 255.0, green: 0x7E / 255.0, blue: 0x7E / 255.0)
     let customGrey = Color(red: 0xD9 / 255, green: 0xD9 / 255, blue: 0xD9 / 255)
+
     
     @State var note : String = ""
     @State var id : String = ""
@@ -30,6 +48,7 @@ struct HabitEntryView: View {
     @State private var showingSheet = false
     @State var specificDay = false
     @State var streakDone = false
+    
     
     
     
@@ -143,14 +162,16 @@ struct HabitEntryView: View {
                 // Card 3
                 VStack {
                     HStack {
-                        Image(systemName: "star.fill")
+                        Image(systemName: "tree.fill")
+                            .foregroundColor(Color.white)
                         Spacer()
-                        Text("Kort 1")
+                        Text("Outdoor")
+                            .foregroundColor(Color.white)
                         Spacer()
                     }
                     .padding()
                 }
-                .background(category == 3 ? Color.blue : Color.gray)
+                .background(category == 3 ? Color.blue :Color(UIColor.fromHex("7BB384")))
                 .cornerRadius(10)
                 .onTapGesture {
                     category = 3
@@ -159,24 +180,151 @@ struct HabitEntryView: View {
                 // Card 4
                 VStack {
                     HStack {
-                        Image(systemName: "heart.fill")
+                        Image(systemName: "bag.fill")
+                            .foregroundColor(Color.white)
                         Spacer()
-                        Text("Kort 2")
+                        Text("Work")
+                            .foregroundColor(Color.white)
+                      
                         Spacer()
                     }
                     .padding()
                 }
-                .background(category == 4 ? Color.blue : Color.gray)
+                .background(category == 4 ? Color.blue : Color(UIColor.fromHex("FA8F8F")))
                 .cornerRadius(10)
                 .onTapGesture {
                     category = 4
                 }
                 
+                
             }
+            HStack {
+                // Card 5
+                VStack {
+                    HStack {
+                        Image(systemName: "graduationcap.fill")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                        Text("Study")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .background(category == 5 ? Color.blue :Color(UIColor.fromHex("F2A9DD")))
+                .cornerRadius(10)
+                .onTapGesture {
+                    category = 5
+                }
+
+                // Card 6
+                VStack {
+                    HStack {
+                        Image(systemName: "tv.fill")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                        Text("Entrertainment")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .background(category == 6 ? Color.blue : Color(UIColor.fromHex("A0D7FF")))
+                .cornerRadius(10)
+                .onTapGesture {
+                    category = 6
+                }
+                
+                
+            }
+            HStack {
+                // Card 7
+                VStack {
+                    HStack {
+                        Image(systemName: "photo.artframe")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                        Text("Art")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .background(category == 7 ? Color.blue : Color(UIColor.fromHex("FFEA7A")))
+                .cornerRadius(10)
+                .onTapGesture {
+                    category = 7
+                }
+
+                // Card 8
+                VStack {
+                    HStack {
+                        Image(systemName: "message.fill")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                        Text("Social")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .background(category == 8 ? Color.blue : Color(UIColor.fromHex("9493CB")))
+                .cornerRadius(10)
+                .onTapGesture {
+                    category = 8
+                }
+                
+                
+            }
+            HStack {
+                // Card 9
+                VStack {
+                    HStack {
+                        Image(systemName: "cross.fill")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                        Text("Health")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .background(category == 9 ? Color.blue : Color(UIColor.fromHex("BD7EBE")))
+                .cornerRadius(10)
+                .onTapGesture {
+                    category = 9
+                }
+
+                // Card 10
+                VStack {
+                    HStack {
+                        Image(systemName: "guitars.fill")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                        Text("Hobbies")
+                            .foregroundColor(Color.white)
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .background(category == 10 ? Color.blue : Color(UIColor.fromHex("7E8AF3")))
+                .cornerRadius(10)
+                .onTapGesture {
+                    category = 10
+                }
+                
+                
+            }
+            
+            
+            
+            
+            
             
             
            
         }
+        
         .onAppear(perform: setContent)
         .navigationBarItems(trailing: Button("save"){
             saveEntry()
