@@ -75,7 +75,7 @@ class HabitViewModel : ObservableObject {
         let calendar = Calendar.current
         let todayDate = Date()
         let weekdayNumber = calendar.component(.weekday, from: todayDate) - 1 // Calendar.component ger söndag som 1, måndag som 2, etc.
-        let weekday = Weekday.allCases[weekdayNumber % 7] // Anpassa indexet till ditt enum (söndag börjar på 0 om din vecka börjar med måndag)
+        let weekday = Weekday.allCases[weekdayNumber % 7] // Anpassa indexet till ditt enum (söndag
         db.collection("habits")
            .whereField("daysActive", arrayContains: weekday.rawValue)
            .addSnapshotListener { querySnapshot, error in
