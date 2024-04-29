@@ -144,30 +144,7 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
                     Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
                 }
                 .simultaneousGesture(TapGesture().onEnded {
-                    // Toggle streakDone status
-                    let newStreakDone = !habitInfo.streakDone
-                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
-                    
-                    // Update currentStreak based on the new streakDone status
-                    if newStreakDone {
-                  
-                        let today = Calendar.current.startOfDay(for: Date())
-                       
-                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
-                        let newStreak = habitInfo.currentStreak + 1
-                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
-                    } else {
-                        let today = Calendar.current.startOfDay(for: Date())
-                        let updatedStreakHistory = habitInfo.streakHistory.filter { date in
-                            return Calendar.current.startOfDay(for: date) != today
-                            
-                        }
-                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" : updatedStreakHistory])
-                       
-                        let newStreak = max(0, habitInfo.currentStreak - 1)
-                        
-                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
-                    }
+                    streak()
                 })
             }
             .padding()
@@ -189,30 +166,7 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
                     Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
                 }
                 .simultaneousGesture(TapGesture().onEnded {
-                    // Toggle streakDone status
-                    let newStreakDone = !habitInfo.streakDone
-                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
-                    
-                    // Update currentStreak based on the new streakDone status
-                    if newStreakDone {
-                  
-                        let today = Calendar.current.startOfDay(for: Date())
-                       
-                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
-                        let newStreak = habitInfo.currentStreak + 1
-                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
-                    } else {
-                        let today = Calendar.current.startOfDay(for: Date())
-                        let updatedStreakHistory = habitInfo.streakHistory.filter { date in
-                            return Calendar.current.startOfDay(for: date) != today
-                            
-                        }
-                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" : updatedStreakHistory])
-                       
-                        let newStreak = max(0, habitInfo.currentStreak - 1)
-                        
-                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
-                    }
+                    streak()
                 })
             }
             
@@ -230,7 +184,33 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
             .cornerRadius(10)
         })
     }
+    func streak() {
+        let newStreakDone = !habitInfo.streakDone
+                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
+
+                    if newStreakDone {
+
+                        let today = Calendar.current.startOfDay(for: Date())
+
+                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
+                        let newStreak = habitInfo.currentStreak + 1
+                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                    } else {
+                        let today = Calendar.current.startOfDay(for: Date())
+                        let updatedStreakHistory = habitInfo.streakHistory.filter { date in
+                            return Calendar.current.startOfDay(for: date) != today
+
+                        }
+                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" : updatedStreakHistory])
+
+                        let newStreak = max(0, habitInfo.currentStreak - 1)
+
+                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                    }
+        
+    }
 }
+
 
     #Preview {
         ContentView()
