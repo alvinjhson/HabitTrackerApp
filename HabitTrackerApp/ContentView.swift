@@ -188,7 +188,6 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
         let newStreakDone = !habitInfo.streakDone
                     db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
 
-                    // Update currentStreak based on the new streakDone status
                     if newStreakDone {
 
                         let today = Calendar.current.startOfDay(for: Date())

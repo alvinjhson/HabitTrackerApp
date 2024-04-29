@@ -74,8 +74,8 @@ class HabitViewModel : ObservableObject {
         let db = Firestore.firestore()
         let calendar = Calendar.current
         let todayDate = Date()
-        let weekdayNumber = calendar.component(.weekday, from: todayDate) - 1 // Calendar.component ger söndag som 1, måndag som 2, etc.
-        let weekday = Weekday.allCases[weekdayNumber % 7] // Anpassa indexet till ditt enum (söndag
+        let weekdayNumber = calendar.component(.weekday, from: todayDate) - 1
+        let weekday = Weekday.allCases[weekdayNumber % 7]
         db.collection("habits")
            .whereField("daysActive", arrayContains: weekday.rawValue)
            .addSnapshotListener { querySnapshot, error in
@@ -85,23 +85,23 @@ class HabitViewModel : ObservableObject {
                    for document in querySnapshot!.documents {
                        print("\(document.documentID) => \(document.data())")
                        let calendar = Calendar.current
-                       let today = calendar.startOfDay(for: Date()) // Sätter tid till 00:00:00 för dagens datum
+                       let today = calendar.startOfDay(for: Date())
 
-                       // Antag att du har ett dokument från Firestore
-                       let documentData = document.data() // Ersätt 'document' med din faktiska dokumentdata
+                    
+                       let documentData = document.data()
                        if let streakHistory = documentData["streakHistory"] as? [Timestamp] {
                            let streakDates = streakHistory.map { calendar.startOfDay(for: $0.dateValue()) }
                            if streakDates.contains(today) {
                                print("Dagens datum finns redan i streakHistory.")
                            } else {
                                print("Dagens datum finns inte i streakHistory, dags att kontrollera streaks!")
-                                   // Anta att vi också kan hämta currentStreak och highestStreak från dokumentet
+                                  
                                    let currentStreak = documentData["currentStreak"] as? Int ?? 0
                                    let highestStreak = documentData["highestStreak"] as? Int ?? 0
                                    
                                    if currentStreak > highestStreak {
                                        print("Nytt rekord! Uppdaterar highest streak till \(currentStreak)")
-                                       // Uppdatera highestStreak om nuvarande streak är högre
+                                       
                                        let documentRef = db.collection("habits").document(document.documentID)
                                        documentRef.updateData([
                                            "highestStreak": currentStreak
@@ -151,10 +151,7 @@ class HabitViewModel : ObservableObject {
                 let daysActiveStrings = document.data()["daysActive"] as? [String] ?? [String]()
                 let daysActive = daysActiveStrings.compactMap { Weekday(rawValue: $0) }
                 let streakDone = document.data()["streakDone"] as? Bool ?? false
-                
-                
-                
-                
+
                 self.noteEntries.append(HabitInformation(id: id, note: note, userId: userId,currentStreak: currentStreak,highestStreak: highestStreak,alertTime: alertTime,streakHistory: streakHistory,category: category,daysActive: daysActive,streakDone: streakDone))
             }
         }
