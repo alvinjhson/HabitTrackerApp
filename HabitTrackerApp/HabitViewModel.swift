@@ -11,12 +11,13 @@ import Firebase
 
 class HabitViewModel : ObservableObject {
     @Published var noteEntries = [HabitInformation]()
+
     
     init(){
         
         setupSnapshotListener()
-       // scheduleMidnightReset()
-      
+        timerStreak()
+        
     }
 
     func update(entry: HabitInformation, with note: String,with category: Int) {
@@ -33,22 +34,22 @@ class HabitViewModel : ObservableObject {
             }
         }
     }
-    func scheduleMidnightReset() {
+    func timerStreak() {
         let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: Date())
-        components.hour = 24
-        components.minute = 0
-        components.second = 0
-
-        // Skapa nästa midnatt-tidpunkt
-        let midnight = calendar.nextDate(after: Date(), matching: components, matchingPolicy: .nextTime)!
-        
-        // Skapa en timer som startar vid midnatt och upprepas varje dag
-        let timer = Timer(fireAt: midnight, interval: 86400, target: self, selector: #selector(resetStreakDone), userInfo: nil, repeats: true)
+        var nextMidnight = calendar.nextDate(after: Date(), matching: DateComponents(hour: 23, minute: 59), matchingPolicy: .nextTime)!
+        let timer = Timer(fireAt: nextMidnight, interval: 0, target: self, selector: #selector(midnightReset), userInfo: nil, repeats: false)
         RunLoop.main.add(timer, forMode: .common)
     }
 
-    @objc func resetStreakDone() {
+    @objc func midnightReset() {
+        print("En minut till midnatt, dags att agera!")
+        checkStreak()
+        resetStreakDone()
+    }
+
+
+
+   func resetStreakDone() {
         let db = Firestore.firestore()
         db.collection("habits").getDocuments { (querySnapshot, err) in
             if let err = err {
@@ -66,7 +67,63 @@ class HabitViewModel : ObservableObject {
             }
         }
         print("Resetting streakDone at midnight")
+
     }
+    
+    func checkStreak() {
+        let db = Firestore.firestore()
+        let calendar = Calendar.current
+        let todayDate = Date()
+        let weekdayNumber = calendar.component(.weekday, from: todayDate) - 1 // Calendar.component ger söndag som 1, måndag som 2, etc.
+        let weekday = Weekday.allCases[weekdayNumber % 7] // Anpassa indexet till ditt enum (söndag börjar på 0 om din vecka börjar med måndag)
+        db.collection("habits")
+           .whereField("daysActive", arrayContains: weekday.rawValue)
+           .addSnapshotListener { querySnapshot, error in
+               if let error = error {
+                   print("Error getting documents: \(error)")
+               } else {
+                   for document in querySnapshot!.documents {
+                       print("\(document.documentID) => \(document.data())")
+                       let calendar = Calendar.current
+                       let today = calendar.startOfDay(for: Date()) // Sätter tid till 00:00:00 för dagens datum
+
+                       // Antag att du har ett dokument från Firestore
+                       let documentData = document.data() // Ersätt 'document' med din faktiska dokumentdata
+                       if let streakHistory = documentData["streakHistory"] as? [Timestamp] {
+                           let streakDates = streakHistory.map { calendar.startOfDay(for: $0.dateValue()) }
+                           if streakDates.contains(today) {
+                               print("Dagens datum finns redan i streakHistory.")
+                           } else {
+                               print("Dagens datum finns inte i streakHistory, dags att kontrollera streaks!")
+                                   // Anta att vi också kan hämta currentStreak och highestStreak från dokumentet
+                                   let currentStreak = documentData["currentStreak"] as? Int ?? 0
+                                   let highestStreak = documentData["highestStreak"] as? Int ?? 0
+                                   
+                                   if currentStreak > highestStreak {
+                                       print("Nytt rekord! Uppdaterar highest streak till \(currentStreak)")
+                                       // Uppdatera highestStreak om nuvarande streak är högre
+                                       let documentRef = db.collection("habits").document(document.documentID)
+                                       documentRef.updateData([
+                                           "highestStreak": currentStreak
+                                       ]) { err in
+                                           if let err = err {
+                                               print("Error updating document: \(err)")
+                                           } else {
+                                               print("Highest streak successfully updated to \(currentStreak)")
+                                           }
+                                       }
+                                   } else {
+                                       print("Ingen ny rekord, highestStreak behöver inte uppdateras.")
+                                   }
+                        
+                           }
+                       }
+                   }
+               }
+           }
+    }
+    
+        
 
 
     func setupSnapshotListener() {
