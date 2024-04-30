@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import UIKit
 struct ContentView: View {
         @State var signedIn = false
     
@@ -172,6 +173,190 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
             
             .padding()
             .background(customBlue)
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 3:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "tree.fill")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background((Color(UIColor.fromHex("7BB384"))))
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 4:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "bag.fill")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background(Color(UIColor.fromHex("FA8F8F")))
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 5:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "graduationcap.fill")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background(Color(UIColor.fromHex("F2A9DD")))
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 6:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "tv.fill")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background(Color(UIColor.fromHex("A0D7FF")))
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 7:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "photo.artframe")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background(Color(UIColor.fromHex("FFF1A6")))
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 8:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "message.fill")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background(Color(UIColor.fromHex("9493CB")))
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 9:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "cross.fill")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background(Color(UIColor.fromHex("BD7EBE")))
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
+        })
+    case 10:
+        return AnyView(VStack {
+            HStack {
+                Image(systemName: "guitars.fill")
+                    .foregroundColor(Color.white)
+                Spacer()
+                Text(habitInfo.note)
+                Spacer()
+                Button(action: {
+
+                }) {
+                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    streak()
+                })
+            }
+            
+            .padding()
+            .background(Color(UIColor.fromHex("7E8AF3")))
             .foregroundColor(Color.white)
             .cornerRadius(10)
         })

@@ -250,7 +250,7 @@ struct HabitEntryView: View {
                     }
                     .padding()
                 }
-                .background(category == 7 ? Color.blue : Color(UIColor.fromHex("FFEA7A")))
+                .background(category == 7 ? Color.blue : Color(UIColor.fromHex("FFF1A6")))
                 .cornerRadius(10)
                 .onTapGesture {
                     category = 7
