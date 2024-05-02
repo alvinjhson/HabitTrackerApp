@@ -99,28 +99,51 @@ struct HabitTrackerView : View{
         let currentDay = Calendar.current.component(.weekday, from: Date())
            let currentWeekday = currentDay.toWeekday()
         Text(currentWeekday?.rawValue.capitalized ?? "Unkown Day")
-        
-        NavigationStack{
-            VStack {
-                List {
-                    ForEach(habit.noteEntries.filter { entry in
-                        entry.daysActive.contains(currentWeekday!)
-                    }) { entry in
-                        NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
-                            categoryView(for: entry)
+        TabView {
+            NavigationStack {
+                VStack {
+                    List {
+                        ForEach(habit.noteEntries.filter { entry in
+                            entry.daysActive.contains(currentWeekday!)
+                        }) { entry in
+                            NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
+                                categoryView(for: entry)
+                            }
                         }
                     }
-
+                    .navigationTitle("Habits")
+                    .navigationBarItems(trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
+                        Image(systemName: "plus.circle")
+                    })
                 }
-                
-
             }
-            .navigationTitle("Habits")
-            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
-                Image(systemName: "plus.circle")
-            })
+            .tabItem {
+                Label("Calendar", systemImage: "calendar")
+            }
         }
+//        NavigationStack{
+//            VStack {
+//                List {
+//                    ForEach(habit.noteEntries.filter { entry in
+//                        entry.daysActive.contains(currentWeekday!)
+//                    }) { entry in
+//                        NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
+//                            categoryView(for: entry)
+//                        }
+//                    }
+//
+//                }
+//             
+//
+//            }
+//            .navigationTitle("Habits")
+//            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
+//                Image(systemName: "plus.circle")
+//            })
+//        }
+
     }
+    
 }
 
 
