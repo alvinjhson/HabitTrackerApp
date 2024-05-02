@@ -25,6 +25,7 @@
 		52F3C0122BD6691600222BF7 /* HabitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F3C0112BD6691600222BF7 /* HabitViewModel.swift */; };
 		52F3C0142BD66A2200222BF7 /* HabitEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F3C0132BD66A2200222BF7 /* HabitEntryView.swift */; };
 		52F3C0162BD6707200222BF7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 52F3C0152BD6707200222BF7 /* GoogleService-Info.plist */; };
+		52F3C01A2BE10E7800222BF7 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F3C0192BE10E7800222BF7 /* CalendarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		52F3C0112BD6691600222BF7 /* HabitViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitViewModel.swift; sourceTree = "<group>"; };
 		52F3C0132BD66A2200222BF7 /* HabitEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEntryView.swift; sourceTree = "<group>"; };
 		52F3C0152BD6707200222BF7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		52F3C0192BE10E7800222BF7 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 				52F3C00F2BD668E500222BF7 /* HabitInformation.swift */,
 				52F3C0112BD6691600222BF7 /* HabitViewModel.swift */,
 				52F3C0132BD66A2200222BF7 /* HabitEntryView.swift */,
+				52F3C0192BE10E7800222BF7 /* CalendarView.swift */,
 			);
 			path = HabitTrackerApp;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 			files = (
 				52F3BFD72BD6542F00222BF7 /* ContentView.swift in Sources */,
 				52F3C0142BD66A2200222BF7 /* HabitEntryView.swift in Sources */,
+				52F3C01A2BE10E7800222BF7 /* CalendarView.swift in Sources */,
 				52F3BFD52BD6542F00222BF7 /* HabitTrackerAppApp.swift in Sources */,
 				52F3C0102BD668E500222BF7 /* HabitInformation.swift in Sources */,
 				52F3C0122BD6691600222BF7 /* HabitViewModel.swift in Sources */,
