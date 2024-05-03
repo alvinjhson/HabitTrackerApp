@@ -95,6 +95,13 @@ struct HabitTrackerView : View{
     
     
     var body: some View {
+        let currentDate = Date()
+        let calendar = Calendar.current
+        let range = calendar.range(of: .day, in: .month, for: currentDate)!
+        let daysInMonth = Array(1...range.count)
+        var components = calendar.dateComponents([.year, .month], from: currentDate)
+       // components.day = 1
+        let firstDayOfMonth = calendar.date(from: components)!
         
         let currentDay = Calendar.current.component(.weekday, from: Date())
            let currentWeekday = currentDay.toWeekday()
@@ -117,8 +124,18 @@ struct HabitTrackerView : View{
                     })
                 }
             }
-            .tabItem {
-                Label("Calendar", systemImage: "calendar")
+            NavigationStack {
+                     // Använd NavigationLink här om du vill ha en knapp som leder till CalendarView
+                NavigationLink(destination: CalendarView(daysInMonth: daysInMonth, firstDayOfMonth: firstDayOfMonth, habitId: "ppen7o0pDwowGa88P8Q8")) {
+                         Text("Öppna Kalender")
+                     }
+                     .navigationTitle("Kalender")
+                 }
+                 .tabItem {
+                     Label("Calendar", systemImage: "calendar")
+                 }
+             }
+                //Label("Calendar", systemImage: "calendar")
             }
         }
 //        NavigationStack{
@@ -142,9 +159,6 @@ struct HabitTrackerView : View{
 //            })
 //        }
 
-    }
-    
-}
 
 
     
@@ -397,12 +411,19 @@ func categoryView(for habitInfo: HabitInformation) -> some View {
                     db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
 
                     if newStreakDone {
-
                         let today = Calendar.current.startOfDay(for: Date())
-
-                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
+                        // Använd arrayUnion för att lägga till dagens datum till streakHistory
+                        db.collection("habits").document(habitInfo.id).updateData([
+                            "streakHistory": FieldValue.arrayUnion([today])
+                        ])
                         let newStreak = habitInfo.currentStreak + 1
                         db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+//
+//                        let today = Calendar.current.startOfDay(for: Date())
+//
+//                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
+//                        let newStreak = habitInfo.currentStreak + 1
+//                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
                     } else {
                         let today = Calendar.current.startOfDay(for: Date())
                         let updatedStreakHistory = habitInfo.streakHistory.filter { date in
