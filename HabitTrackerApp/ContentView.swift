@@ -90,7 +90,7 @@ extension Int {
 
 struct HabitTrackerView : View{
     
-    
+    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var habit: HabitViewModel
     
     
@@ -100,343 +100,332 @@ struct HabitTrackerView : View{
         let range = calendar.range(of: .day, in: .month, for: currentDate)!
         let daysInMonth = Array(1...range.count)
         var components = calendar.dateComponents([.year, .month], from: currentDate)
-       // components.day = 1
+        // components.day = 1
         let firstDayOfMonth = calendar.date(from: components)!
         
         let currentDay = Calendar.current.component(.weekday, from: Date())
-           let currentWeekday = currentDay.toWeekday()
+        let currentWeekday = currentDay.toWeekday()
         Text(currentWeekday?.rawValue.capitalized ?? "Unkown Day")
         TabView {
             NavigationStack {
-                VStack {
-                    List {
-                        ForEach(habit.noteEntries.filter { entry in
-                            entry.daysActive.contains(currentWeekday!)
-                        }) { entry in
-                            NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
-                                categoryView(for: entry)
-                            }
+                List {
+                    ForEach(habit.noteEntries.filter { entry in
+                        entry.daysActive.contains(currentWeekday!)
+                    }) { entry in
+                        NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
+                            categoryView(for: entry)
                         }
                     }
-                    .navigationTitle("Habits")
-                    .navigationBarItems(trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
-                        Image(systemName: "plus.circle")
+                }
+                .navigationTitle("Habits")
+                .navigationBarItems(trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
+                    Image(systemName: "plus.circle")
+                })
+            }
+            .tabItem {
+                Label("Habits", systemImage: "list.bullet")
+            }
+
+            NavigationStack {
+                CalendarView(daysInMonth: daysInMonth, firstDayOfMonth: firstDayOfMonth, habitId: "ppen7o0pDwowGa88P8Q8")
+                    .navigationTitle("Kalender")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {  
+//                            Button("Tillbaka") {
+//                                // Använd .dismiss() för att gå tillbaka
+//                                presentationMode.wrappedValue.dismiss()
+//                                
+//                            }
+                        }
+                    }
+            }
+            .tabItem {
+                Label("Calendar", systemImage: "calendar")
+            }
+
+        }
+    }
+
+    
+    
+    
+    
+    
+    func categoryView(for habitInfo: HabitInformation) -> some View {
+        let db = Firestore.firestore()
+        let customBlue = Color(red: 0x3D / 255.0, green: 0x84 / 255.0, blue: 0xB7 / 255.0)
+        let customGreen = Color(red: 0x29 / 255.0, green: 0x7E / 255.0, blue: 0x7E / 255.0)
+        switch habitInfo.category {
+        case 1:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "figure.strengthtraining.traditional")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
                     })
                 }
-            }
-            NavigationStack {
-                     // Använd NavigationLink här om du vill ha en knapp som leder till CalendarView
-                NavigationLink(destination: CalendarView(daysInMonth: daysInMonth, firstDayOfMonth: firstDayOfMonth, habitId: "ppen7o0pDwowGa88P8Q8")) {
-                         Text("Öppna Kalender")
-                     }
-                     .navigationTitle("Kalender")
-                 }
-                 .tabItem {
-                     Label("Calendar", systemImage: "calendar")
-                 }
-             }
-                //Label("Calendar", systemImage: "calendar")
-            }
-        }
-//        NavigationStack{
-//            VStack {
-//                List {
-//                    ForEach(habit.noteEntries.filter { entry in
-//                        entry.daysActive.contains(currentWeekday!)
-//                    }) { entry in
-//                        NavigationLink(destination: HabitEntryView(habitEntry: entry, alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
-//                            categoryView(for: entry)
-//                        }
-//                    }
-//
-//                }
-//             
-//
-//            }
-//            .navigationTitle("Habits")
-//            .navigationBarItems( trailing: NavigationLink(destination: HabitEntryView(alertTime: Date(), streakHistory: [Date()], daysActive: [])) {
-//                Image(systemName: "plus.circle")
-//            })
-//        }
-
-
-
-    
-    
-func categoryView(for habitInfo: HabitInformation) -> some View {
-    let db = Firestore.firestore()
-    let customBlue = Color(red: 0x3D / 255.0, green: 0x84 / 255.0, blue: 0xB7 / 255.0)
-    let customGreen = Color(red: 0x29 / 255.0, green: 0x7E / 255.0, blue: 0x7E / 255.0)
-    switch habitInfo.category {
-    case 1:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "figure.strengthtraining.traditional")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            .padding()
-            .background(customGreen)
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 2:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "fork.knife")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(customBlue)
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 3:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "tree.fill")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background((Color(UIColor.fromHex("7BB384"))))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 4:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "bag.fill")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(Color(UIColor.fromHex("FA8F8F")))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 5:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "graduationcap.fill")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(Color(UIColor.fromHex("F2A9DD")))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 6:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "tv.fill")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(Color(UIColor.fromHex("A0D7FF")))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 7:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "photo.artframe")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(Color(UIColor.fromHex("FFF1A6")))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 8:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "message.fill")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(Color(UIColor.fromHex("9493CB")))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 9:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "cross.fill")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(Color(UIColor.fromHex("BD7EBE")))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    case 10:
-        return AnyView(VStack {
-            HStack {
-                Image(systemName: "guitars.fill")
-                    .foregroundColor(Color.white)
-                Spacer()
-                Text(habitInfo.note)
-                Spacer()
-                Button(action: {
-
-                }) {
-                    Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    streak()
-                })
-            }
-            
-            .padding()
-            .background(Color(UIColor.fromHex("7E8AF3")))
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    default:
-        return AnyView(VStack {
-            Text("Andra kategorier här")
-            .padding()
-            .background(Color.gray)
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-        })
-    }
-    func streak() {
-        let newStreakDone = !habitInfo.streakDone
-                    db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
-
-                    if newStreakDone {
-                        let today = Calendar.current.startOfDay(for: Date())
-                        // Använd arrayUnion för att lägga till dagens datum till streakHistory
-                        db.collection("habits").document(habitInfo.id).updateData([
-                            "streakHistory": FieldValue.arrayUnion([today])
-                        ])
-                        let newStreak = habitInfo.currentStreak + 1
-                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
-//
-//                        let today = Calendar.current.startOfDay(for: Date())
-//
-//                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
-//                        let newStreak = habitInfo.currentStreak + 1
-//                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
-                    } else {
-                        let today = Calendar.current.startOfDay(for: Date())
-                        let updatedStreakHistory = habitInfo.streakHistory.filter { date in
-                            return Calendar.current.startOfDay(for: date) != today
-
-                        }
-                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" : updatedStreakHistory])
-
-                        let newStreak = max(0, habitInfo.currentStreak - 1)
-
-                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                .padding()
+                .background(customGreen)
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 2:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "fork.knife")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
                     }
-        
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(customBlue)
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 3:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "tree.fill")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background((Color(UIColor.fromHex("7BB384"))))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 4:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "bag.fill")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(Color(UIColor.fromHex("FA8F8F")))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 5:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "graduationcap.fill")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(Color(UIColor.fromHex("F2A9DD")))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 6:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "tv.fill")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(Color(UIColor.fromHex("A0D7FF")))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 7:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "photo.artframe")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(Color(UIColor.fromHex("FFF1A6")))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 8:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "message.fill")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(Color(UIColor.fromHex("9493CB")))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 9:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "cross.fill")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(Color(UIColor.fromHex("BD7EBE")))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        case 10:
+            return AnyView(VStack {
+                HStack {
+                    Image(systemName: "guitars.fill")
+                        .foregroundColor(Color.white)
+                    Spacer()
+                    Text(habitInfo.note)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        Image(systemName: habitInfo.streakDone ? "checkmark.circle.fill" : "circle.fill")
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        streak()
+                    })
+                }
+                
+                .padding()
+                .background(Color(UIColor.fromHex("7E8AF3")))
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+            })
+        default:
+            return AnyView(VStack {
+                Text("Andra kategorier här")
+                    .padding()
+                    .background(Color.gray)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(10)
+            })
+        }
+        func streak() {
+            let newStreakDone = !habitInfo.streakDone
+            db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
+            
+            if newStreakDone {
+                let today = Calendar.current.startOfDay(for: Date())
+                // Använd arrayUnion för att lägga till dagens datum till streakHistory
+                db.collection("habits").document(habitInfo.id).updateData([
+                    "streakHistory": FieldValue.arrayUnion([today])
+                ])
+                let newStreak = habitInfo.currentStreak + 1
+                db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                //
+                //                        let today = Calendar.current.startOfDay(for: Date())
+                //
+                //                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
+                //                        let newStreak = habitInfo.currentStreak + 1
+                //                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+            } else {
+                let today = Calendar.current.startOfDay(for: Date())
+                let updatedStreakHistory = habitInfo.streakHistory.filter { date in
+                    return Calendar.current.startOfDay(for: date) != today
+                    
+                }
+                db.collection("habits").document(habitInfo.id).updateData(["streakHistory" : updatedStreakHistory])
+                
+                let newStreak = max(0, habitInfo.currentStreak - 1)
+                
+                db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+            }
+            
+        }
     }
 }
 

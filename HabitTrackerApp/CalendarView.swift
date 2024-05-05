@@ -16,89 +16,170 @@ import SwiftUI
 //        return calendar.isDate(self, inSameDayAs: otherDate)
 //    }
 //}
+struct Habit {
+    var id: String
+  
+}
+
 
 struct CalendarView: View {
     @State private var streakDaysSet = Set<String>()
     let daysInMonth: [Int]
     let firstDayOfMonth: Date
-    var habitId: String // Antag att du har ett sätt att identifiera vilken habit du vill hämta
-   @State var dateFormatter = DateFormatter()
+ 
+    @State var habitId: String = "ppen7o0pDwowGa88P8Q8"
+    @State var dateFormatter = DateFormatter()
+    @State var daysToShow = [Int]()
+    @State var habits: [Habit] = []
+    @State var selectedHabitId: String = ""
+    
+    
+    
     
     
     init(daysInMonth: [Int], firstDayOfMonth: Date, habitId: String) {
-        
+       
         self.daysInMonth = daysInMonth
         self.firstDayOfMonth = firstDayOfMonth
         self.habitId = habitId
-       // fetchStreakHistory()
-       // print("hello working")
+       
+
+        print("Initierar med första dagen i månaden: \(firstDayOfMonth)")
     }
     
- 
+    
     
     var body: some View {
-       
-        let columns = [
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-            GridItem(.flexible()),
-            GridItem(.flexible())
-        ]
-        
-        
-        ScrollView {
-            LazyVGrid(columns: columns) {
-                ForEach(daysInMonth, id: \.self) { day in
-           
-                    let dayDate = Calendar.current.date(bySetting: .day, value: day, of: firstDayOfMonth)!
-                    let startOfDayDate = Calendar.current.startOfDay(for: dayDate)
-                    
-                    let dateString = dateFormatter.string(from: startOfDayDate)
-                    let isStreakDay = streakDaysSet.contains(dateString)
-                  
-                    
-                    Text("\(day)")
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
-                        .background(isStreakDay ? Color.green : Color.white)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(Color.blue, lineWidth: 2)
-                        )
-                }
-            }
-        }
-        .onAppear {
-             fetchStreakHistory()
+        VStack {
+             Picker("Välj habit", selection: $selectedHabitId) {
+                 ForEach(habits, id: \.id) { habit in
+                     Text(habit.id)
+                 }
+             }
+             .pickerStyle(SegmentedPickerStyle())
+             .onChange(of: selectedHabitId) { newValue in
+                habitId = newValue
+                 fetchStreakHistory()
+                 showRightDays()
+                 
+             
+             }
+            
          }
-    }
-
-
-    func fetchStreakHistory() {
-        let db = Firestore.firestore()
-        db.collection("habits").document(habitId).getDocument { (document, error) in
-            if let streakHistory = document?.data()?["streakHistory"] as? [Timestamp] {
-                print("Streak History: \(streakHistory)")
-               // let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd" // Sätt formatet till år-månad-dag
-                dateFormatter.timeZone = TimeZone(secondsFromGMT: 0) // Ställ in tidszonen till UTC
-                let dateStrings = streakHistory.map { timestamp -> String in
-                    let date = timestamp.dateValue() // Konvertera Timestamp till Date
-                    let dateString = dateFormatter.string(from: date) // Formatera Date till String och använd som datum utan tid
-                    print("Formatted Date String: \(dateString)") // Lägg till denna rad för att se utskriften
-                    
-                    return dateString
+            
+            let columns = [
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ]
+            
+            ScrollView {
+                let weekDays = ["M", "Ti", "O", "To", "F", "L", "S"]
+                let combinedDays = daysToShow.enumerated().map { index, day -> (id: Int, day: Int) in
+                    return (id: index, day: day)
                 }
-                print("Date Strings: \(dateStrings)")
-                self.streakDaysSet = Set(dateStrings) // Använd Set för att hantera unika datumsträngar
-                print("Streak Days Set: \(self.streakDaysSet)")
-            } else {
-                print("No streakHistory data found or wrong data type.")
+                
+                
+                
+                LazyVGrid(columns: columns) {
+                  
+                    ForEach(weekDays, id: \.self) { day in
+                        Text(day)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
+                            .background(Color.gray.opacity(0.2)) // Ger en lätt distinkt bakgrund
+                    }
+                    
+                    
+                    ForEach(combinedDays, id: \.id) { dayInfo in
+                        let dayDate = Calendar.current.date(bySetting: .day, value: dayInfo.day, of: firstDayOfMonth)!
+                        let startOfDayDate = Calendar.current.startOfDay(for: dayDate)
+                        let dateString = dateFormatter.string(from: startOfDayDate)
+                        let isStreakDay = streakDaysSet.contains(dateString)
+                        Text("\(dayInfo.day)")
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
+                            .background(isStreakDay ? Color.green : Color.white)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .stroke(Color.blue, lineWidth: 2)
+                            )
+                        
+                    }
+                    
+                }
+            }
+            .onAppear {
+            
+                fetchStreakHistory()
+                showRightDays()
+                loadHabits()
+                
             }
         }
+      
+        func loadHabits() {
+            self.habits = []
+            
+      
+            let db = Firestore.firestore()
+            db.collection("habits").getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        let habitId = document.documentID
+                        let newHabit = Habit(id: habitId)
+                        self.habits.append(newHabit)
+                        print(habitId)
+                    }
+                }
+            }
+        }
+        func showRightDays() {
+            let calendar = Calendar.current
+            let weekday = calendar.component(.weekday, from: firstDayOfMonth)
+            let daysInPreviousMonth = calendar.range(of: .day, in: .month, for: calendar.date(byAdding: .month, value: -1, to: firstDayOfMonth)!)!.count
+            let numDaysToAdd = max(0, weekday - 2)
+            
+            daysToShow = (daysInPreviousMonth - numDaysToAdd + 1...daysInPreviousMonth).map { $0 } + daysInMonth
+            
+           
+            print("Weekday: \(weekday)")
+            print("Days in Previous Month: \(daysInPreviousMonth)")
+            print("Number of Days to Add: \(numDaysToAdd)")
+            print("Days to Show: \(daysToShow)")
+        }
+        
+        
+        func fetchStreakHistory() {
+            let db = Firestore.firestore()
+            db.collection("habits").document(habitId).getDocument { (document, error) in
+                if let streakHistory = document?.data()?["streakHistory"] as? [Timestamp] {
+                    print("Streak History: \(streakHistory)")
+                   
+                    dateFormatter.dateFormat = "yyyy-MM-dd"
+                    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+                    let dateStrings = streakHistory.map { timestamp -> String in
+                        let date = timestamp.dateValue()
+                        let dateString = dateFormatter.string(from: date)
+                        print("Formatted Date String: \(dateString)")
+                        
+                        return dateString
+                    }
+                    print("Date Strings: \(dateStrings)")
+                    self.streakDaysSet = Set(dateStrings)
+                    print("Streak Days Set: \(self.streakDaysSet)")
+                } else {
+                    print("No streakHistory data found or wrong data type.")
+                }
+            }
+        }
+        
+        
+        
+        
     }
 
- 
-}
