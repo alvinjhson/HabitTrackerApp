@@ -128,9 +128,9 @@ struct HabitTrackerView : View{
 
             NavigationStack {
                 CalendarView(daysInMonth: daysInMonth, firstDayOfMonth: firstDayOfMonth, habitId: "ppen7o0pDwowGa88P8Q8")
-                    .navigationTitle("Kalender")
+                    .navigationTitle("Calendar")
                     .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {  
+                        ToolbarItem(placement: .navigationBarLeading) {
 //                            Button("Tillbaka") {
 //                                // Använd .dismiss() för att gå tillbaka
 //                                presentationMode.wrappedValue.dismiss()

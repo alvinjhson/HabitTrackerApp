@@ -18,6 +18,7 @@ import SwiftUI
 //}
 struct Habit {
     var id: String
+    var habitName: String
   
 }
 
@@ -32,6 +33,9 @@ struct CalendarView: View {
     @State var daysToShow = [Int]()
     @State var habits: [Habit] = []
     @State var selectedHabitId: String = ""
+    @State var currentStreak: Int = 0
+    @State var highestStreak: Int = 0
+    @State var habitName: String = ""
     
     
     
@@ -53,7 +57,7 @@ struct CalendarView: View {
         VStack {
              Picker("Välj habit", selection: $selectedHabitId) {
                  ForEach(habits, id: \.id) { habit in
-                     Text(habit.id)
+                     Text(habit.habitName)
                  }
              }
              .pickerStyle(SegmentedPickerStyle())
@@ -78,7 +82,8 @@ struct CalendarView: View {
             ]
             
             ScrollView {
-                let weekDays = ["M", "Ti", "O", "To", "F", "L", "S"]
+               // let weekDays = ["M", "Ti", "O", "To", "F", "L", "S"]
+                let weekDays = ["M", "Tu", "W", "Th", "F", "Sa", "Su"]
                 let combinedDays = daysToShow.enumerated().map { index, day -> (id: Int, day: Int) in
                     return (id: index, day: day)
                 }
@@ -110,6 +115,10 @@ struct CalendarView: View {
                     }
                     
                 }
+                VStack{
+                    Text("CurrentStreak:\(currentStreak)")
+                    Text("HighestStreak: \(highestStreak)")
+                }
             }
             .onAppear {
             
@@ -119,25 +128,48 @@ struct CalendarView: View {
                 
             }
         }
-      
-        func loadHabits() {
-            self.habits = []
-            
-      
-            let db = Firestore.firestore()
-            db.collection("habits").getDocuments { (querySnapshot, err) in
-                if let err = err {
-                    print("Error getting documents: \(err)")
-                } else {
-                    for document in querySnapshot!.documents {
-                        let habitId = document.documentID
-                        let newHabit = Habit(id: habitId)
-                        self.habits.append(newHabit)
-                        print(habitId)
+    func loadHabits() {
+        self.habits = []
+
+        let db = Firestore.firestore()
+        db.collection("habits").getDocuments { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    let habitId = document.documentID
+                    var habitName = "Standard Namn" // Standardvärde om namnet inte finns
+
+                    if let habit = document.data()["habit"] as? String {
+                        habitName = habit
                     }
+
+                    let newHabit = Habit(id: habitId, habitName: habitName)
+                    self.habits.append(newHabit)
+                    print(habitId)
                 }
             }
         }
+    }
+      
+//        func loadHabits() {
+//            self.habits = []
+//            
+//      
+//            let db = Firestore.firestore()
+//            db.collection("habits").getDocuments { (querySnapshot, err) in
+//                if let err = err {
+//                    print("Error getting documents: \(err)")
+//                } else {
+//                    for document in querySnapshot!.documents {
+//                        let habitId = document.documentID
+//                        let newHabit = Habit(id: habitId)
+//                        self.habits.append(newHabit)
+//                        print(habitId)
+//                    }
+//                }
+//            }
+//        }
         func showRightDays() {
             let calendar = Calendar.current
             let weekday = calendar.component(.weekday, from: firstDayOfMonth)
@@ -172,9 +204,21 @@ struct CalendarView: View {
                     print("Date Strings: \(dateStrings)")
                     self.streakDaysSet = Set(dateStrings)
                     print("Streak Days Set: \(self.streakDaysSet)")
-                } else {
+                    
+                    
+                } 
+                if let currentStreak = document?.data()?["currentStreak"] as? Int {
+                    self.currentStreak = currentStreak
+                  }
+                  if let highestStreak = document?.data()?["highestStreak"] as? Int {
+                      self.highestStreak = highestStreak
+                  }
+                if let habit = document?.data()?["habit"] as? String {
+                    self.habitName = habit
+                }else {
                     print("No streakHistory data found or wrong data type.")
                 }
+             
             }
         }
         
