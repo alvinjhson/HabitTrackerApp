@@ -396,36 +396,36 @@ struct HabitTrackerView : View{
         }
         func streak() {
             let newStreakDone = !habitInfo.streakDone
-            db.collection("habits").document(habitInfo.id).updateData(["streakDone" : newStreakDone])
-            
+            let documentReference = db.collection("habits").document(habitInfo.id)
+
+         
+            documentReference.updateData(["streakDone" : newStreakDone])
+
+            let today = Calendar.current.startOfDay(for: Date())
+
             if newStreakDone {
-                let today = Calendar.current.startOfDay(for: Date())
-                // Använd arrayUnion för att lägga till dagens datum till streakHistory
-                db.collection("habits").document(habitInfo.id).updateData([
+               
+                documentReference.updateData([
                     "streakHistory": FieldValue.arrayUnion([today])
                 ])
+
+           
                 let newStreak = habitInfo.currentStreak + 1
-                db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
-                //
-                //                        let today = Calendar.current.startOfDay(for: Date())
-                //
-                //                        db.collection("habits").document(habitInfo.id).updateData(["streakHistory" :today])
-                //                        let newStreak = habitInfo.currentStreak + 1
-                //                        db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                documentReference.updateData(["currentStreak" : newStreak])
+
             } else {
-                let today = Calendar.current.startOfDay(for: Date())
-                let updatedStreakHistory = habitInfo.streakHistory.filter { date in
-                    return Calendar.current.startOfDay(for: date) != today
-                    
-                }
-                db.collection("habits").document(habitInfo.id).updateData(["streakHistory" : updatedStreakHistory])
-                
+               
+                documentReference.updateData([
+                    "streakHistory": FieldValue.arrayRemove([today])
+                ])
+
+               
                 let newStreak = max(0, habitInfo.currentStreak - 1)
-                
-                db.collection("habits").document(habitInfo.id).updateData(["currentStreak" : newStreak])
+                documentReference.updateData(["currentStreak" : newStreak])
             }
-            
         }
+
+
     }
 }
 
