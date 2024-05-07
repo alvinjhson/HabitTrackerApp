@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		526096E62BEA28B4004EFA51 /* NotificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526096E52BEA28B4004EFA51 /* NotificationViewModel.swift */; };
 		52F3BFD52BD6542F00222BF7 /* HabitTrackerAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F3BFD42BD6542F00222BF7 /* HabitTrackerAppApp.swift */; };
 		52F3BFD72BD6542F00222BF7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F3BFD62BD6542F00222BF7 /* ContentView.swift */; };
 		52F3BFD92BD6543000222BF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52F3BFD82BD6543000222BF7 /* Assets.xcassets */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		526096E52BEA28B4004EFA51 /* NotificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewModel.swift; sourceTree = "<group>"; };
 		52F3BFD12BD6542F00222BF7 /* HabitTrackerApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitTrackerApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52F3BFD42BD6542F00222BF7 /* HabitTrackerAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTrackerAppApp.swift; sourceTree = "<group>"; };
 		52F3BFD62BD6542F00222BF7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				52F3C0112BD6691600222BF7 /* HabitViewModel.swift */,
 				52F3C0132BD66A2200222BF7 /* HabitEntryView.swift */,
 				52F3C0192BE10E7800222BF7 /* CalendarView.swift */,
+				526096E52BEA28B4004EFA51 /* NotificationViewModel.swift */,
 			);
 			path = HabitTrackerApp;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 				52F3BFD72BD6542F00222BF7 /* ContentView.swift in Sources */,
 				52F3C0142BD66A2200222BF7 /* HabitEntryView.swift in Sources */,
 				52F3C01A2BE10E7800222BF7 /* CalendarView.swift in Sources */,
+				526096E62BEA28B4004EFA51 /* NotificationViewModel.swift in Sources */,
 				52F3BFD52BD6542F00222BF7 /* HabitTrackerAppApp.swift in Sources */,
 				52F3C0102BD668E500222BF7 /* HabitInformation.swift in Sources */,
 				52F3C0122BD6691600222BF7 /* HabitViewModel.swift in Sources */,

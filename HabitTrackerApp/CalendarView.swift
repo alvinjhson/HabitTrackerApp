@@ -83,7 +83,7 @@ struct CalendarView: View {
             
             ScrollView {
                // let weekDays = ["M", "Ti", "O", "To", "F", "L", "S"]
-                let weekDays = ["M", "Tu", "W", "Th", "F", "Sa", "Su"]
+                let weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
                 let combinedDays = daysToShow.enumerated().map { index, day -> (id: Int, day: Int) in
                     return (id: index, day: day)
                 }
@@ -95,7 +95,7 @@ struct CalendarView: View {
                     ForEach(weekDays, id: \.self) { day in
                         Text(day)
                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50)
-                            .background(Color.gray.opacity(0.2)) // Ger en lätt distinkt bakgrund
+                            .background(Color.gray.opacity(0.2))  
                     }
                     
                     
@@ -138,7 +138,7 @@ struct CalendarView: View {
             } else {
                 for document in querySnapshot!.documents {
                     let habitId = document.documentID
-                    var habitName = "Standard Namn" // Standardvärde om namnet inte finns
+                    var habitName = "Standard Namn"
 
                     if let habit = document.data()["habit"] as? String {
                         habitName = habit
@@ -152,24 +152,7 @@ struct CalendarView: View {
         }
     }
       
-//        func loadHabits() {
-//            self.habits = []
-//            
-//      
-//            let db = Firestore.firestore()
-//            db.collection("habits").getDocuments { (querySnapshot, err) in
-//                if let err = err {
-//                    print("Error getting documents: \(err)")
-//                } else {
-//                    for document in querySnapshot!.documents {
-//                        let habitId = document.documentID
-//                        let newHabit = Habit(id: habitId)
-//                        self.habits.append(newHabit)
-//                        print(habitId)
-//                    }
-//                }
-//            }
-//        }
+
         func showRightDays() {
             let calendar = Calendar.current
             let weekday = calendar.component(.weekday, from: firstDayOfMonth)

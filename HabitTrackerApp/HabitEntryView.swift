@@ -48,6 +48,8 @@ struct HabitEntryView: View {
     @State private var showingSheet = false
     @State var specificDay = false
     @State var streakDone = false
+    @ObservedObject var notificationVM = NotificationViewModel()
+    @State private var showingDatePicker = false
     
     
     
@@ -55,7 +57,7 @@ struct HabitEntryView: View {
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         VStack {
-            
+            //Spacer()
             VStack{
                 Text("What is your habit?")
                 TextEditor(text: $note)
@@ -68,6 +70,33 @@ struct HabitEntryView: View {
                                    )
                                 
             }
+            VStack {
+                        Button("Välj tid för påminnelse") {
+                            showingDatePicker = true
+                        }
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .sheet(isPresented: $showingDatePicker) {
+                        VStack {
+                            Text("Välj en tid för din påminnelse:")
+                            DatePicker("Alert Time", selection: $notificationVM.alertTime, displayedComponents: .hourAndMinute)
+                                .datePickerStyle(WheelDatePickerStyle())
+                                .labelsHidden()
+                            
+                            Button("Spara") {
+                                notificationVM.scheduleNotification()
+                                showingDatePicker = false
+                            }
+                            .padding()
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                        .padding()
+                    }
             Spacer()
             Text("Select a day of habit")
                 .bold()
@@ -412,7 +441,7 @@ struct HabitEntryView: View {
         }
     }
 }
-#Preview {
-    HabitEntryView( daysActive: [])
- 
-}
+//#Preview {
+//    HabitEntryView( daysActive: [])
+// 
+//}
