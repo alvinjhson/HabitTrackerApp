@@ -71,7 +71,7 @@ struct HabitEntryView: View {
                                 
             }
             VStack {
-                        Button("Välj tid för påminnelse") {
+                        Button("Time for alert?") {
                             showingDatePicker = true
                         }
                         .padding()
@@ -81,12 +81,12 @@ struct HabitEntryView: View {
                     }
                     .sheet(isPresented: $showingDatePicker) {
                         VStack {
-                            Text("Välj en tid för din påminnelse:")
+                            Text("Choose time for your alert:")
                             DatePicker("Alert Time", selection: $notificationVM.alertTime, displayedComponents: .hourAndMinute)
                                 .datePickerStyle(WheelDatePickerStyle())
                                 .labelsHidden()
                             
-                            Button("Spara") {
+                            Button("Save") {
                                 notificationVM.scheduleNotification()
                                 showingDatePicker = false
                             }

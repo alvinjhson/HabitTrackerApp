@@ -26,7 +26,7 @@ struct Habit {
 struct CalendarView: View {
     @State private var streakDaysSet = Set<String>()
     let daysInMonth: [Int]
-    let firstDayOfMonth: Date
+   @State var firstDayOfMonth: Date
  
     @State var habitId: String = "ppen7o0pDwowGa88P8Q8"
     @State var dateFormatter = DateFormatter()
@@ -36,8 +36,11 @@ struct CalendarView: View {
     @State var currentStreak: Int = 0
     @State var highestStreak: Int = 0
     @State var habitName: String = ""
-    
-    //test
+    @State var selectedMonth: String = "Januari"
+    @State  var monthIndex = 0
+    @State  var currentMonth = 4 // Startar med index 0 (Januari)
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  
     
     
     
@@ -55,7 +58,28 @@ struct CalendarView: View {
     
     var body: some View {
         VStack {
-             Picker("Välj habit", selection: $selectedHabitId) {
+         
+                      HStack {
+                          Button(action: {
+                              if currentMonth > 0 {
+                                  currentMonth -= 1
+                                  updateFirstDayOfMonth()
+                              }
+                          }) {
+                              Image(systemName: "arrow.left")
+                          }
+                          Text(months[currentMonth])
+                              .frame(minWidth: 100, alignment: .center)
+                          Button(action: {
+                              if currentMonth < months.count - 1 {
+                                  currentMonth += 1
+                                  updateFirstDayOfMonth()
+                              }
+                          }) {
+                              Image(systemName: "arrow.right")
+                          }
+                      }
+             Picker("Choose habit", selection: $selectedHabitId) {
                  ForEach(habits, id: \.id) { habit in
                      Text(habit.habitName)
                  }
@@ -158,8 +182,15 @@ struct CalendarView: View {
             let weekday = calendar.component(.weekday, from: firstDayOfMonth)
             let daysInPreviousMonth = calendar.range(of: .day, in: .month, for: calendar.date(byAdding: .month, value: -1, to: firstDayOfMonth)!)!.count
             let numDaysToAdd = max(0, weekday - 2)
+            let startDay = max(1, daysInPreviousMonth - numDaysToAdd + 1)
+            if startDay <= daysInPreviousMonth {
+                daysToShow = (startDay...daysInPreviousMonth).map { $0 } + daysInMonth
+            } else {
+               
+                daysToShow = daysInMonth
+            }
             
-            daysToShow = (daysInPreviousMonth - numDaysToAdd + 1...daysInPreviousMonth).map { $0 } + daysInMonth
+            //daysToShow = (daysInPreviousMonth - numDaysToAdd + 1...daysInPreviousMonth).map { $0 } + daysInMonth
             
            
             print("Weekday: \(weekday)")
@@ -167,7 +198,14 @@ struct CalendarView: View {
             print("Number of Days to Add: \(numDaysToAdd)")
             print("Days to Show: \(daysToShow)")
         }
-        
+    
+    func updateFirstDayOfMonth() {
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.year, .month], from: Date())
+        components.month = currentMonth + 1
+        firstDayOfMonth = calendar.date(from: components)!
+        showRightDays()
+    }
         
         func fetchStreakHistory() {
             let db = Firestore.firestore()
