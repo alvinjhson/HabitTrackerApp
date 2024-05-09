@@ -20,7 +20,7 @@ class NotificationViewModel: NSObject, ObservableObject, UNUserNotificationCente
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
                 DispatchQueue.main.async {
-                    // Uppdatera appens UI eller tillstånd om nödvändigt
+         
                 }
             } else if let error = error {
                 print("Error: (error.localizedDescription)")
@@ -51,7 +51,7 @@ class NotificationViewModel: NSObject, ObservableObject, UNUserNotificationCente
         }
     }
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-             completionHandler([.banner, .sound]) // Ändra detta beroende på vilka typer av alert du vill visa
+             completionHandler([.banner, .sound]) 
          }
 }
 

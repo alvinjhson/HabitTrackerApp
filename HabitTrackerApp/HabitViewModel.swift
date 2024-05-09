@@ -42,7 +42,7 @@ class HabitViewModel : ObservableObject {
     }
 
     @objc func midnightReset() {
-        print("En minut till midnatt, dags att agera!")
+      
         checkStreak()
         resetStreakDone()
     }
@@ -66,7 +66,7 @@ class HabitViewModel : ObservableObject {
                 }
             }
         }
-        print("Resetting streakDone at midnight")
+        print("Reset at midnight")
 
     }
     
@@ -92,28 +92,38 @@ class HabitViewModel : ObservableObject {
                        if let streakHistory = documentData["streakHistory"] as? [Timestamp] {
                            let streakDates = streakHistory.map { calendar.startOfDay(for: $0.dateValue()) }
                            if streakDates.contains(today) {
-                               print("Dagens datum finns redan i streakHistory.")
+                               print("todays date is in streakhistory.")
                            } else {
-                               print("Dagens datum finns inte i streakHistory, dags att kontrollera streaks!")
+                               print("today date not in streakhistory!")
                                   
                                    let currentStreak = documentData["currentStreak"] as? Int ?? 0
                                    let highestStreak = documentData["highestStreak"] as? Int ?? 0
+                               let documentRef = db.collection("habits").document(document.documentID)
+                               documentRef.updateData([
+                                   "currentStreak": 0
+                               ]) { err in
+                                   if let err = err {
+                                       print("Error \(err)")
+                                   } else {
+                                       print("current streak is 0")
+                                   }
+                               }
                                    
                                    if currentStreak > highestStreak {
-                                       print("Nytt rekord! Uppdaterar highest streak till \(currentStreak)")
+                                       print("new highest streak \(currentStreak)")
                                        
                                        let documentRef = db.collection("habits").document(document.documentID)
                                        documentRef.updateData([
                                            "highestStreak": currentStreak
                                        ]) { err in
                                            if let err = err {
-                                               print("Error updating document: \(err)")
+                                               print("error \(err)")
                                            } else {
-                                               print("Highest streak successfully updated to \(currentStreak)")
+                                               print("hiegest streak is \(currentStreak)")
                                            }
                                        }
                                    } else {
-                                       print("Ingen ny rekord, highestStreak behöver inte uppdateras.")
+                                       print("no new streak")
                                    }
                         
                            }

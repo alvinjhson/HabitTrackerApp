@@ -51,7 +51,7 @@ struct CalendarView: View {
         self.habitId = habitId
        
 
-        print("Initierar med första dagen i månaden: \(firstDayOfMonth)")
+       
     }
     
     
